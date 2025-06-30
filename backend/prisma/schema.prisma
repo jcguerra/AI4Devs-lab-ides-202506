@@ -14,7 +14,121 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id          Int      @id @default(autoincrement())
+  email       String   @unique @db.VarChar(255)
+  name        String?  @db.VarChar(100)
+  role        UserRole @default(RECRUITER)
+  
+  // Relaciones
+  candidates  Candidate[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("users")
+}
+
+model Candidate {
+  id                Int      @id @default(autoincrement())
+  firstName         String   @db.VarChar(100)
+  lastName          String   @db.VarChar(100)
+  email             String   @unique @db.VarChar(255)
+  phone             String   @db.VarChar(20)
+  address           String   @db.Text
+  
+  // Relaciones
+  educations        Education[]
+  experiences       WorkExperience[]
+  documents         Document[]
+  
+  // Metadatos
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  createdBy         Int      // ID del reclutador
+  
+  // Relación con User (reclutador)
+  recruiter         User     @relation(fields: [createdBy], references: [id])
+  
+  @@map("candidates")
+}
+
+model Education {
+  id            Int      @id @default(autoincrement())
+  candidateId   Int
+  institution   String   @db.VarChar(255)
+  degree        String   @db.VarChar(255)
+  fieldOfStudy  String?  @db.VarChar(255)
+  startDate     DateTime?
+  endDate       DateTime?
+  isCurrent     Boolean  @default(false)
+  description   String?  @db.Text
+  
+  // Relaciones
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("educations")
+}
+
+model WorkExperience {
+  id            Int      @id @default(autoincrement())
+  candidateId   Int
+  company       String   @db.VarChar(255)
+  position      String   @db.VarChar(255)
+  startDate     DateTime
+  endDate       DateTime?
+  isCurrent     Boolean  @default(false)
+  description   String?  @db.Text
+  
+  // Relaciones
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("work_experiences")
+}
+
+model Document {
+  id            Int      @id @default(autoincrement())
+  candidateId   Int
+  fileName      String   @db.VarChar(255)  // Nombre del archivo en MinIO
+  originalName  String   @db.VarChar(255)  // Nombre original del archivo
+  mimeType      String   @db.VarChar(100)
+  fileSize      Int
+  filePath      String   @db.VarChar(500)  // Ruta completa en MinIO bucket
+  bucketName    String   @db.VarChar(100)  // Nombre del bucket en MinIO
+  etag          String?  @db.VarChar(255)  // ETag del archivo en MinIO
+  documentType  DocumentType @default(CV)
+  uploadStatus  UploadStatus @default(PENDING)
+  
+  // Relaciones
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("documents")
+}
+
+enum UserRole {
+  ADMIN
+  RECRUITER
+  MANAGER
+}
+
+enum UploadStatus {
+  PENDING
+  UPLOADED
+  FAILED
+  DELETED
+}
+
+enum DocumentType {
+  CV
+  COVER_LETTER
+  CERTIFICATE
+  OTHER
 }

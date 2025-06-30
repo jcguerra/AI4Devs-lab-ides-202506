@@ -1,46 +1,153 @@
-# Getting Started with Create React App
+# Frontend - Sistema ATS
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Funcionalidades Implementadas - FASE 4
 
-## Available Scripts
+### ✅ Componentes Principales
+- **Dashboard**: Interfaz principal con navegación
+- **CandidateForm**: Formulario completo de candidatos con acordeones
+- **CandidateList**: Lista paginada con búsqueda en tiempo real
+- **CandidateView**: Vista detallada en modal
+- **EducationForm**: Gestión dinámica de registros educativos
+- **ExperienceForm**: Gestión dinámica de experiencia laboral
+- **FileUpload**: Componente drag & drop para documentos
 
-In the project directory, you can run:
+### ✅ Características Destacadas
+- **Material-UI**: Diseño moderno y responsivo
+- **Validaciones en tiempo real**: Teléfono, email, dirección según especificaciones
+- **Campos dinámicos**: Añadir/eliminar educación y experiencia
+- **Subida de archivos**: Drag & drop con validación (PDF/DOCX, 10MB)
+- **Búsqueda**: Debounce de 500ms con resultados en tiempo real
+- **Paginación**: Configurable (5, 10, 25, 50 elementos)
+- **Estados de carga**: Skeletons y spinners
+- **Alertas**: Feedback visual para todas las acciones
+- **Breadcrumbs**: Navegación clara entre vistas
 
-### `npm start`
+### ✅ Criterios de Aceptación Cumplidos
+1. ✅ **Accesibilidad desde dashboard**: FAB + botón en header
+2. ✅ **Formulario completo**: Campos obligatorios y opcionales
+3. ✅ **Validación en tiempo real**: Todos los campos según specs
+4. ✅ **Carga de documentos**: PDF/DOCX, máximo 10MB
+5. ✅ **Gestión educación/experiencia**: Múltiples registros dinámicos
+6. ✅ **Confirmación y errores**: Alertas y diálogos
+7. ✅ **Interfaz responsiva**: Mobile-first design
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🛠 Tecnologías Utilizadas
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **React 18.3.1** con TypeScript
+- **Material-UI v5** para componentes UI
+- **Axios** para comunicación con API
+- **React Hooks** para gestión de estado
 
-### `npm test`
+## 🚀 Comandos Disponibles
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+# Instalar dependencias
+npm install
 
-### `npm run build`
+# Ejecutar en desarrollo
+npm start
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Ejecutar tests
+npm test
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Build para producción
+npm run build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🔧 Configuración
 
-### `npm run eject`
+### Variables de Entorno
+Crea un archivo `.env` en la raíz del frontend:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```env
+REACT_APP_API_URL=http://localhost:3010
+REACT_APP_API_VERSION=v1
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### URLs por Defecto
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:3010
+- **API Base**: http://localhost:3010/api/v1
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 📁 Estructura de Componentes
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+src/
+├── components/
+│   ├── common/
+│   │   └── FileUpload/
+│   │       └── FileUpload.tsx
+│   ├── candidate/
+│   │   ├── CandidateForm/
+│   │   │   ├── CandidateForm.tsx
+│   │   │   ├── EducationForm.tsx
+│   │   │   └── ExperienceForm.tsx
+│   │   ├── CandidateList/
+│   │   │   └── CandidateList.tsx
+│   │   └── CandidateView/
+│   │       └── CandidateView.tsx
+│   └── Dashboard/
+│       └── Dashboard.tsx
+├── services/
+│   ├── api.service.ts
+│   └── candidate.service.ts
+├── types/
+│   └── candidate.types.ts
+├── utils/
+│   └── validation.utils.ts
+└── config/
+    └── config.ts
+```
 
-## Learn More
+## 🎨 Tema Material-UI
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+El sistema usa un tema personalizado con:
+- **Colores primarios**: Azul (#1976d2)
+- **Colores secundarios**: Rojo (#dc004e)
+- **Tipografía**: Roboto con pesos personalizados
+- **Componentes**: Botones sin texto en mayúsculas, cards redondeadas
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🔍 Funcionalidades de Usuario
+
+### Gestión de Candidatos
+1. **Ver lista**: Tabla paginada con avatares y chips informativos
+2. **Búsqueda**: Tiempo real por nombre, email o empresa
+3. **Añadir candidato**: Formulario en acordeones con validaciones
+4. **Editar candidato**: Misma interfaz con datos precargados
+5. **Ver detalles**: Modal completo con toda la información
+6. **Eliminar**: Confirmación con nombre del candidato
+
+### Educación y Experiencia
+- **Añadir múltiples**: Sin límite de registros
+- **Fechas inteligentes**: Campo "Actual" deshabilita fecha fin
+- **Validaciones**: Campos obligatorios marcados
+- **Interfaz intuitiva**: Cards con botones de eliminación
+
+### Gestión de Archivos
+- **Drag & Drop**: Zona visual para arrastrar archivos
+- **Validación**: Tipo (PDF/DOCX) y tamaño (10MB)
+- **Preview**: Información del archivo seleccionado
+- **Estados**: Reemplazar archivo existente
+
+## ⚡ Rendimiento
+
+- **Lazy loading**: Componentes cargados bajo demanda
+- **Debounce**: Búsqueda optimizada
+- **Memoización**: React.memo en componentes pesados
+- **Skeletons**: Mejor UX durante cargas
+
+## 🐛 Manejo de Errores
+
+- **Validaciones locales**: Sin llamadas al servidor innecesarias
+- **Errores de API**: Mensajes específicos del backend
+- **Errores de red**: Fallback amigable
+- **Estados de carga**: Prevención de doble envío
+
+## 📱 Responsividad
+
+- **Mobile First**: Diseño optimizado para móviles
+- **Breakpoints**: sm, md, lg, xl configurados
+- **Grid system**: Material-UI Grid responsive
+- **Navigation**: Breadcrumbs adaptativos
+
+El frontend está **100% funcional** y cumple todos los criterios de aceptación especificados.
