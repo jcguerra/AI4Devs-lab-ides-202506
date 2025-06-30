@@ -31,7 +31,8 @@ import {
   Person as PersonIcon,
   School as SchoolIcon,
   Work as WorkIcon,
-  InsertDriveFile as FileIcon
+  InsertDriveFile as FileIcon,
+  Add as AddIcon
 } from '@mui/icons-material';
 import { Candidate } from '../../../types/candidate.types';
 import candidateService from '../../../services/candidate.service';
@@ -41,6 +42,7 @@ interface CandidateListProps {
   onEditCandidate: (candidate: Candidate) => void;
   onViewCandidate: (candidate: Candidate) => void;
   onDeleteCandidate: (candidateId: number) => void;
+  onAddCandidate: () => void; // Nueva prop para añadir candidato
   refreshTrigger?: number; // Para forzar refresh desde componente padre
 }
 
@@ -48,6 +50,7 @@ const CandidateList: React.FC<CandidateListProps> = ({
   onEditCandidate,
   onViewCandidate,
   onDeleteCandidate,
+  onAddCandidate,
   refreshTrigger
 }) => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -94,6 +97,7 @@ const CandidateList: React.FC<CandidateListProps> = ({
   };
 
   useEffect(() => {
+    console.log('CandidateList: Refreshing candidates, refreshTrigger:', refreshTrigger);
     loadCandidates(searchTerm, page, rowsPerPage);
   }, [page, rowsPerPage, refreshTrigger]);
 
@@ -149,6 +153,14 @@ const CandidateList: React.FC<CandidateListProps> = ({
           <Typography variant="h5" component="h2">
             Lista de Candidatos ({totalCount})
           </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={onAddCandidate}
+            sx={{ ml: 2 }}
+          >
+            Añadir Candidato
+          </Button>
         </Box>
         
         <TextField

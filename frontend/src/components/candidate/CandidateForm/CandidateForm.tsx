@@ -140,21 +140,37 @@ const CandidateForm: React.FC<CandidateFormProps> = ({
     setErrors({});
 
     try {
-      // Limpiar datos antes de enviar - SOLUCION APLICADA
-      const cleanedFormData: CreateCandidateDto = {
-        ...formData,
-        educations: formData.educations?.map(education => ({
-          ...education,
+      // Función para limpiar campos de base de datos de educación
+      const cleanEducation = (education: any) => {
+        const { id, candidateId, createdAt, updatedAt, ...cleanEducation } = education;
+        return {
+          ...cleanEducation,
           endDate: education.isCurrent ? null : (education.endDate || null),
           startDate: education.startDate || null,
           fieldOfStudy: education.fieldOfStudy || undefined,
           description: education.description || undefined
-        })),
-        experiences: formData.experiences?.map(experience => ({
-          ...experience,
+        };
+      };
+
+      // Función para limpiar campos de base de datos de experiencia
+      const cleanExperience = (experience: any) => {
+        const { id, candidateId, createdAt, updatedAt, ...cleanExperience } = experience;
+        return {
+          ...cleanExperience,
           endDate: experience.isCurrent ? null : (experience.endDate || null),
           description: experience.description || undefined
-        }))
+        };
+      };
+
+      // Limpiar datos antes de enviar - ELIMINAR CAMPOS DE BD
+      const cleanedFormData: CreateCandidateDto = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        educations: formData.educations?.map(cleanEducation),
+        experiences: formData.experiences?.map(cleanExperience)
       };
 
       let result;

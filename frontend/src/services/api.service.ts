@@ -58,6 +58,18 @@ class ApiService {
   async delete<T>(url: string): Promise<ApiResponse<T>> {
     try {
       const response = await axios.delete<ApiResponse<T>>(url);
+      
+      // Para códigos 204 (No Content), crear una respuesta exitosa manualmente
+      if (response.status === 204) {
+        return {
+          success: true,
+          data: null as T,
+          meta: {
+            timestamp: new Date().toISOString()
+          }
+        };
+      }
+      
       return response.data;
     } catch (error: any) {
       return this.handleError(error);

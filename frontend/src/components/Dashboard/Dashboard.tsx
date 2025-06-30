@@ -9,12 +9,12 @@ import {
   DialogContent,
   DialogActions,
   Alert,
-  Fab,
   AppBar,
   Toolbar,
   IconButton,
   Breadcrumbs,
-  Link
+  Link,
+  CircularProgress
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -52,6 +52,7 @@ const Dashboard: React.FC = () => {
     type: 'success',
     message: ''
   });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showAlert = (type: 'success' | 'error', message: string) => {
     setAlert({ show: true, type, message });
@@ -86,22 +87,34 @@ const Dashboard: React.FC = () => {
   };
 
   const confirmDelete = async () => {
-    if (!deleteDialog.candidateId) return;
+    if (!deleteDialog.candidateId || isDeleting) return;
+
+    // Prevenir múltiples eliminaciones del mismo candidato
+    const candidateId = deleteDialog.candidateId;
+    
+    setIsDeleting(true);
+    
+    // Cerrar el diálogo inmediatamente para prevenir doble clic
+    setDeleteDialog({ open: false, candidateId: null, candidateName: '' });
 
     try {
-      const result = await candidateService.deleteCandidate(deleteDialog.candidateId);
+      const result = await candidateService.deleteCandidate(candidateId);
       
       if (result.success) {
         showAlert('success', 'Candidato eliminado exitosamente');
-        setRefreshTrigger(prev => prev + 1);
+        // Forzar refresh de la lista con un pequeño delay
+        setTimeout(() => {
+          setRefreshTrigger(prev => prev + 1);
+        }, 100);
         setViewMode('list');
       } else {
+        // Si hay error, mostrar el mensaje pero no reabrir el diálogo
         showAlert('error', result.error?.message || 'Error al eliminar el candidato');
       }
     } catch (error: any) {
       showAlert('error', 'Error de conexión al eliminar el candidato');
     } finally {
-      setDeleteDialog({ open: false, candidateId: null, candidateName: '' });
+      setIsDeleting(false);
     }
   };
 
@@ -127,7 +140,7 @@ const Dashboard: React.FC = () => {
       case 'view':
         return 'Detalles del Candidato';
       default:
-        return 'Sistema ATS - Gestión de Candidatos';
+        return 'LTI Sistema ATS - Gestión de Candidatos';
     }
   };
 
@@ -162,16 +175,6 @@ const Dashboard: React.FC = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {getPageTitle()}
           </Typography>
-          {viewMode === 'list' && (
-            <Button
-              color="inherit"
-              startIcon={<AddIcon />}
-              onClick={handleAddCandidate}
-              sx={{ ml: 2 }}
-            >
-              Añadir Candidato
-            </Button>
-          )}
         </Toolbar>
       </AppBar>
 
@@ -222,6 +225,7 @@ const Dashboard: React.FC = () => {
             onEditCandidate={handleEditCandidate}
             onViewCandidate={handleViewCandidate}
             onDeleteCandidate={handleDeleteCandidate}
+            onAddCandidate={handleAddCandidate}
             refreshTrigger={refreshTrigger}
           />
         )}
@@ -245,22 +249,23 @@ const Dashboard: React.FC = () => {
         )}
       </Container>
 
-      {/* FAB para añadir candidato */}
-      {viewMode === 'list' && (
-        <Fab
-          color="primary"
-          aria-label="añadir candidato"
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 1000
-          }}
-          onClick={handleAddCandidate}
-        >
-          <AddIcon />
-        </Fab>
-      )}
+      {/* Footer */}
+      <Box
+        component="footer"
+        sx={{
+          mt: 'auto',
+          py: 3,
+          px: 2,
+          bgcolor: 'background.default',
+          borderTop: 1,
+          borderColor: 'divider',
+          textAlign: 'center'
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          LTI Sistema ATS - LIDR Academy 2025
+        </Typography>
+      </Box>
 
       {/* Dialog de confirmación de eliminación */}
       <Dialog
@@ -293,8 +298,10 @@ const Dashboard: React.FC = () => {
             onClick={confirmDelete}
             color="error"
             variant="contained"
+            disabled={isDeleting}
+            startIcon={isDeleting ? <CircularProgress size={20} /> : undefined}
           >
-            Eliminar
+            {isDeleting ? 'Eliminando...' : 'Eliminar'}
           </Button>
         </DialogActions>
       </Dialog>
