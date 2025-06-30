@@ -1,7 +1,21 @@
 import Joi from 'joi';
 
 export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Validación de email estándar que permite + y otros caracteres válidos
+  const emailRegex = /^[a-zA-Z0-9]([a-zA-Z0-9._+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/;
+  
+  // Verificar que no tenga puntos consecutivos
+  if (email.includes('..')) {
+    return false;
+  }
+  
+  // Verificar que no empiece o termine con . o -
+  if (email.startsWith('.') || email.startsWith('-') || 
+      email.includes('.-') || email.includes('-.') ||
+      email.includes('@.') || email.includes('.@')) {
+    return false;
+  }
+  
   return emailRegex.test(email);
 };
 

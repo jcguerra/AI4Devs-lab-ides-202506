@@ -4,20 +4,25 @@ import documentRoutes from './document.routes';
 
 const router = Router();
 
-// Versioning de la API
-const API_VERSION = process.env.API_VERSION || 'v1';
+// Rutas principales (sin prefijo /api/v1 porque ya se monta en index.ts)
+router.use('/candidates', candidateRoutes);
+router.use('/', documentRoutes);
 
-// Rutas principales
-router.use(`/api/${API_VERSION}/candidates`, candidateRoutes);
-router.use(`/api/${API_VERSION}`, documentRoutes);
-
-// Ruta de health check
-router.get('/api/health', (req, res) => {
+// Ruta de health check adicional (pero la principal está en index.ts)
+router.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    version: API_VERSION,
-    service: 'ATS Backend'
+    version: 'v1',
+    service: 'ATS Backend API',
+    endpoints: [
+      'GET /api/v1/candidates',
+      'POST /api/v1/candidates',
+      'GET /api/v1/candidates/:id',
+      'PUT /api/v1/candidates/:id',
+      'DELETE /api/v1/candidates/:id',
+      'GET /api/v1/candidates/search'
+    ]
   });
 });
 

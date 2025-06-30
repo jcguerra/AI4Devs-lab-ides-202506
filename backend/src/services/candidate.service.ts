@@ -3,10 +3,12 @@ import { CreateCandidateDto, UpdateCandidateDto, CandidateFilters, CandidateWith
 import { ValidationError, BusinessError, NotFoundError, DuplicateError } from '../utils/errors';
 import { candidateValidationSchema, updateCandidateValidationSchema } from '../utils/validators';
 import { PAGINATION } from '../utils/constants';
+import { EmailService } from './email.service';
 
 export class CandidateService {
   constructor(
-    private candidateRepository: ICandidateRepository
+    private candidateRepository: ICandidateRepository,
+    private emailService?: EmailService
   ) {}
 
   async createCandidate(data: CreateCandidateDto, recruiterId: number): Promise<CandidateWithRelations> {
@@ -27,6 +29,29 @@ export class CandidateService {
     // Crear el candidato
     try {
       const candidate = await this.candidateRepository.create(value, recruiterId);
+
+      // Enviar notificaciones por email (async, no bloquea la respuesta)
+      if (this.emailService) {
+        try {
+          // Notificar al reclutador por defecto
+          const recruiterEmail = process.env.DEFAULT_RECRUITER_EMAIL || 'recruiter@ats.com';
+          
+          // Ejecutar ambos emails en paralelo sin bloquear la respuesta
+          Promise.all([
+            this.emailService.notifyCandidateCreated(candidate, recruiterEmail),
+            this.emailService.notifyCandidateWelcome(candidate)
+          ]).catch(emailError => {
+            console.error('⚠️ Error enviando emails de notificación:', emailError);
+            // No lanzar el error para no afectar el flujo principal
+          });
+          
+          console.log('📧 Emails de notificación enviados para candidato:', candidate.email);
+        } catch (emailError) {
+          console.error('⚠️ Error configurando emails de notificación:', emailError);
+          // No lanzar el error para no afectar el flujo principal
+        }
+      }
+
       return candidate as CandidateWithRelations;
     } catch (error: any) {
       if (error.message.includes('ya existe')) {
@@ -96,6 +121,23 @@ export class CandidateService {
 
     try {
       const updatedCandidate = await this.candidateRepository.update(id, value);
+
+      // Notificar actualización por email (async, no bloquea)
+      if (this.emailService) {
+        try {
+          const recruiterEmail = process.env.DEFAULT_RECRUITER_EMAIL || 'recruiter@ats.com';
+          
+          this.emailService.notifyCandidateUpdated(updatedCandidate, recruiterEmail)
+            .catch(emailError => {
+              console.error('⚠️ Error enviando email de actualización:', emailError);
+            });
+            
+          console.log('📧 Email de actualización enviado para candidato:', updatedCandidate.email);
+        } catch (emailError) {
+          console.error('⚠️ Error configurando email de actualización:', emailError);
+        }
+      }
+
       return updatedCandidate as CandidateWithRelations;
     } catch (error: any) {
       if (error.message.includes('ya existe')) {
