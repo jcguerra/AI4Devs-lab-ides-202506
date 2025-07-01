@@ -18,7 +18,7 @@ import {
   School as SchoolIcon
 } from '@mui/icons-material';
 import { Education } from '../../../types/candidate.types';
-import { formatDateForInput } from '../../../utils/validation.utils';
+import { formatDateForInput, validateDateRange, getDateRangeErrorMessage } from '../../../utils/validation.utils';
 
 interface EducationFormProps {
   educations: Education[];
@@ -59,6 +59,15 @@ const EducationForm: React.FC<EducationFormProps> = ({
     }
     
     onChange(newEducations);
+  };
+
+  const getDateValidationError = (education: Education): string => {
+    if (!education.isCurrent && education.startDate && education.endDate) {
+      if (!validateDateRange(education.startDate, education.endDate)) {
+        return getDateRangeErrorMessage();
+      }
+    }
+    return '';
   };
 
   return (
@@ -157,7 +166,8 @@ const EducationForm: React.FC<EducationFormProps> = ({
                       onChange={(e) => updateEducation(index, 'endDate', e.target.value)}
                       disabled={disabled || education.isCurrent}
                       InputLabelProps={{ shrink: true }}
-                      helperText={education.isCurrent ? 'Actualmente estudiando' : ''}
+                      helperText={education.isCurrent ? 'Actualmente estudiando' : getDateValidationError(education)}
+                      error={!education.isCurrent && getDateValidationError(education) !== ''}
                     />
                   </Grid>
                   <Grid item xs={12}>
