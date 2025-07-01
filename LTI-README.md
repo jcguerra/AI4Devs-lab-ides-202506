@@ -55,7 +55,7 @@ El Sistema ATS es una aplicación web completa para la gestión de candidatos en
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/jcguerra/AI4Devs-lab-ides-202506
 cd AI4Devs-lab-ides-202506
 ```
 
