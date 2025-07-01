@@ -104,5 +104,88 @@ describe('Validation Utils', () => {
       const { error } = candidateValidationSchema.validate(candidateWithCurrentEducation);
       expect(error).toBeUndefined();
     });
+
+    it('should reject education with endDate before startDate', () => {
+      const candidateWithInvalidEducationDates = {
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        email: 'juan@example.com',
+        phone: '+34 123 456 789',
+        address: 'Calle Test 123, Madrid',
+        educations: [
+          {
+            institution: 'Universidad Test',
+            degree: 'Grado',
+            fieldOfStudy: 'Informática',
+            startDate: '2024-01-01T00:00:00.000Z',
+            endDate: '2023-01-01T00:00:00.000Z', // Fecha anterior al inicio
+            isCurrent: false,
+            description: 'Educación con fechas incorrectas'
+          }
+        ]
+      };
+
+      const { error } = candidateValidationSchema.validate(candidateWithInvalidEducationDates);
+      expect(error).toBeDefined();
+      expect(error?.details[0]?.context?.message).toBe('La fecha de finalización no puede ser anterior a la fecha de inicio');
+    });
+
+    it('should reject experience with endDate before startDate', () => {
+      const candidateWithInvalidExperienceDates = {
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        email: 'juan@example.com',
+        phone: '+34 123 456 789',
+        address: 'Calle Test 123, Madrid',
+        experiences: [
+          {
+            company: 'TestCorp',
+            position: 'Desarrollador',
+            startDate: '2024-01-01T00:00:00.000Z',
+            endDate: '2023-01-01T00:00:00.000Z', // Fecha anterior al inicio
+            isCurrent: false,
+            description: 'Experiencia con fechas incorrectas'
+          }
+        ]
+      };
+
+      const { error } = candidateValidationSchema.validate(candidateWithInvalidExperienceDates);
+      expect(error).toBeDefined();
+      expect(error?.details[0]?.context?.message).toBe('La fecha de finalización no puede ser anterior a la fecha de inicio');
+    });
+
+    it('should allow current education/experience with null endDate', () => {
+      const candidateWithCurrentItems = {
+        firstName: 'Juan',
+        lastName: 'Pérez',
+        email: 'juan@example.com',
+        phone: '+34 123 456 789',
+        address: 'Calle Test 123, Madrid',
+        educations: [
+          {
+            institution: 'Universidad Test',
+            degree: 'Máster',
+            fieldOfStudy: 'IA',
+            startDate: '2024-01-01T00:00:00.000Z',
+            endDate: null,
+            isCurrent: true,
+            description: 'Estudiando actualmente'
+          }
+        ],
+        experiences: [
+          {
+            company: 'TestCorp',
+            position: 'Desarrollador',
+            startDate: '2024-01-01T00:00:00.000Z',
+            endDate: null,
+            isCurrent: true,
+            description: 'Trabajo actual'
+          }
+        ]
+      };
+
+      const { error } = candidateValidationSchema.validate(candidateWithCurrentItems);
+      expect(error).toBeUndefined();
+    });
   });
 }); 

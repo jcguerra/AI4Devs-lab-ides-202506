@@ -93,6 +93,19 @@ export const candidateValidationSchema = Joi.object({
       ),
       isCurrent: Joi.boolean().required(),
       description: Joi.string().trim().allow('')
+    }).custom((value, helpers) => {
+      // Validar que la fecha de finalización no sea anterior a la fecha de inicio
+      if (value.startDate && value.endDate && !value.isCurrent) {
+        const startDate = new Date(value.startDate);
+        const endDate = new Date(value.endDate);
+        
+        if (endDate < startDate) {
+          return helpers.error('any.invalid', { 
+            message: 'La fecha de finalización no puede ser anterior a la fecha de inicio' 
+          });
+        }
+      }
+      return value;
     })
   ).optional(),
   
@@ -108,6 +121,19 @@ export const candidateValidationSchema = Joi.object({
       ),
       isCurrent: Joi.boolean().required(),
       description: Joi.string().trim().allow('')
+    }).custom((value, helpers) => {
+      // Validar que la fecha de finalización no sea anterior a la fecha de inicio
+      if (value.startDate && value.endDate && !value.isCurrent) {
+        const startDate = new Date(value.startDate);
+        const endDate = new Date(value.endDate);
+        
+        if (endDate < startDate) {
+          return helpers.error('any.invalid', { 
+            message: 'La fecha de finalización no puede ser anterior a la fecha de inicio' 
+          });
+        }
+      }
+      return value;
     })
   ).optional()
 });
