@@ -18,7 +18,7 @@ import {
   Work as WorkIcon
 } from '@mui/icons-material';
 import { WorkExperience } from '../../../types/candidate.types';
-import { formatDateForInput } from '../../../utils/validation.utils';
+import { formatDateForInput, validateDateRange, getDateRangeErrorMessage } from '../../../utils/validation.utils';
 
 interface ExperienceFormProps {
   experiences: WorkExperience[];
@@ -58,6 +58,15 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
     }
     
     onChange(newExperiences);
+  };
+
+  const getDateValidationError = (experience: WorkExperience): string => {
+    if (!experience.isCurrent && experience.startDate && experience.endDate) {
+      if (!validateDateRange(experience.startDate, experience.endDate)) {
+        return getDateRangeErrorMessage();
+      }
+    }
+    return '';
   };
 
   return (
@@ -135,7 +144,8 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({
                         onChange={(e) => updateExperience(index, 'endDate', e.target.value)}
                         disabled={disabled || experience.isCurrent}
                         InputLabelProps={{ shrink: true }}
-                        helperText={experience.isCurrent ? 'Trabajo actual' : ''}
+                        helperText={experience.isCurrent ? 'Trabajo actual' : getDateValidationError(experience)}
+                        error={!experience.isCurrent && getDateValidationError(experience) !== ''}
                       />
                       <FormControlLabel
                         sx={{ mt: 1 }}

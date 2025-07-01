@@ -53,4 +53,17 @@ export const formatDateForInput = (date: string | Date): string => {
   if (!date) return '';
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   return dateObj.toISOString().split('T')[0];
+};
+
+export const validateDateRange = (startDate: string | Date, endDate: string | Date): boolean => {
+  if (!startDate || !endDate) return true; // Si alguna fecha está vacía, no validamos
+  
+  const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
+  const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
+  
+  return end >= start;
+};
+
+export const getDateRangeErrorMessage = (): string => {
+  return 'La fecha de finalización no puede ser anterior a la fecha de inicio';
 }; 
