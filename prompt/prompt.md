@@ -132,20 +132,20 @@ Una vez que tengas estas aclaraciones, procederé inmediatamente con la **FASE 1
 **User**
 
 Respuestas:
-1. Configuración Técnica
+1. Configuración Técnica:
 - Prefiero mantener el puerto 3010 para el backen.
 - No hay requisito específico de autenticación para esta primera versión.
-2. Funcionalidad del Formulario
+2. Funcionalidad del Formulario:
 - prefiero que sean campos dinámicos donde se puedan añadir múltiples registros en el mismo formulario.
 - La validacion para telefonos serian no aceptar campos vacios, campo obligatorio,  permitir espacios, paréntesis, guiones, y símbolo + para internacionales, minimo 7 y maximo 15 caracteres. Para el campo de direccion serian no aceptar campos vacios, campo obligatorio, maximo de 255 caracteres, permitir letras, números, espacios, signos de puntuación (., ,, -, #, /).
-3. Gestión de Archivos
+3. Gestión de Archivos:
 - El limite de tamańo de archivos no debe superar los 10MB.
 - No necesitamos previsualización el PDF en la interfaz, simplemente mostramos el nombre del archivo subido.
 - Usemos MInio para el storage de los archivos de los candidatos
-4. UX/UI
+4. UX/UI:
 - Podemos usar Material-UI.
 - El dashboard debe mostrar una lista de candidatos existentes y el boton para ańadir candidatos, tambien para ver el detalle del candidato.
-5. Prioridades
+5. Prioridades:
 - ambas son importantes, es importante todas las funcionalidades basicas funcionando y tener una buena experiencia de usuario desde el inicio.
 
 ---
